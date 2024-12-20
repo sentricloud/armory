@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: OIDC provider and initial roles for GitHub Actions
+
+Metadata:
+  TemplateInfo:
+    Name: role-github-automation
+    Description: IAM Roles for GitHub Action Automation
+    Deploy-To: Once in any account
+    Version: 1.0.0
+    Source: armory/iam/cfn/github/role-github-automation.yaml
+    Note: This template is part of the SC Consulting product deployment
+    QuickStackLink: Not deployed to bucket currently
+    LastUpdated: 20241220
+    Nonce: 20241206
+
+Parameters:
+  UpdateNonce:
+    Description: >
+      Optional: Random Output Identifier to force update of resource (Used for deployment CI/CD and StackSet updates)
+    Type: String
+
+Resources:
+  DeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: github-automation-deploy
+      Description: Primary Role for use in GitHub Actions
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: PrimaryGitHubActionsRole
+            Effect: Allow
+            Principal:
+              Federated: !ImportValue GitHubOidcIdpARN
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub: repo:sentricloud/*
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  DeliverRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: github-automation-deliver
+      Description: Deliver Role for use in GitHub Actions
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: DeliverGitHubActionsRole
+            Effect: Allow
+            Principal:
+              Federated: !ImportValue GitHubOidcIdpARN
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub: repo:sentricloud/*
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+
+  ReadRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: github-automation-read
+      Description: Read Role for use in GitHub Actions
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ReadGitHubActionsRole
+            Effect: Allow
+            Principal:
+              Federated: !ImportValue GitHubOidcIdpARN
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub: repo:sentricloud/*
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+
+Outputs:
+  UpdateNonce:
+    Description: A Random Output Identifier to force update of resource (Used for deployment CI/CD and StackSet updates)
+    Value: !Ref UpdateNonce
+
+  DeployRoleARN:
+    Description: ARN of GitHub Actions Deploy Role
+    Value: !GetAtt DeployRole.Arn
+    Export:
+      Name: DeployRoleARN
+
+  DeliverRoleARN:
+    Description: ARN of GitHub Actions Deliver Role
+    Value: !GetAtt DeliverRole.Arn
+    Export:
+      Name: DeliverRoleARN
+
+  ReadRoleARN:
+    Description: ARN of GitHub Actions Read Role
+    Value: !GetAtt ReadRole.Arn
+    Export:
+      Name: ReadRoleARN

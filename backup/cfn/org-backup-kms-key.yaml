@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Shared KMS Key for dedicated central Backup account
+
+Metadata:
+  TemplateInfo:
+    Name: org-backup-kms-key
+    Description: KMS key for cross-account backups in the dedicated Backup account
+    Deploy-To: Management Account Home Region
+    Version: 1.0.0
+    Source: armory/backup/cfn/org-backup-kms-key.yaml
+    Note: This template is part of the SC Consulting product deployment
+    QuickStackLink: Not deployed to bucket currently
+    LastUpdated: 20241209
+    Nonce: 20241209
+
+Resources:
+  rBackupKMSKey:
+    Type: AWS::KMS::Key
+    # checkov:skip=CKV_AWS_33: Wildcard Principal - Required for all-org accounts access
+    Properties:
+      Description: KMS key for cross-account backups in the dedicated Backup account
+      Enabled: true
+      EnableKeyRotation: true
+      MultiRegion: true
+      KeyPolicy:
+        Version: "2012-10-17"
+        Id: KeyPolicy-BackupKmsKey
+        Statement:
+          - Sid: AllowRootAccess
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action:
+              - kms:*
+            Resource: "*"
+          - Sid: AllowAccessForAWSOrganization
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GetKeyPolicy
+              - kms:CreateGrant
+              - kms:ListGrants
+              - kms:RevokeGrant
+            Resource: "*"
+            Condition:
+              StringEquals:
+                aws:PrincipalOrgID: "{{ssm:resolve:/automation/reference/org/OrganizationId}}"
+      Tags:
+        - Key: Purpose
+          Value: Backup
+
+  rBackupKMSKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/org-backup-service
+      TargetKeyId: !Ref rBackupKMSKey
+Outputs:
+  oBackupKmsKeyArn:
+    Description: The ARN of the KMS key for backups
+    Value: !GetAtt rBackupKMSKey.Arn

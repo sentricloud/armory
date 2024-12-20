@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IAM Role for GitHub Action Automation
+
+Parameters:
+  RoleName:
+    Description: Name of the role
+    Type: String
+    Default: main-github-actions
+
+  Audience:
+    Description: List of allowed audience for the tokens
+    Type: CommaDelimitedList
+    Default: sts.amazonaws.com
+
+  Repos:
+    Description: Lost of Repos/Orgs and/or Git Refs to allow access for
+    Type: CommaDelimitedList
+    Default: repo:sAWeetStacks/*
+
+  RolePath:
+    Description: IAM Path required for the role (must end with `/`)
+    Type: String
+    Default: /github/
+
+  ManagedPolicies:
+    Description: List for arns for managed policies to attach to the role
+    Type: CommaDelimitedList
+    Default: arn:aws:iam::aws:policy/ReadOnlyAccess
+
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref RoleName
+      Description: Primary Role for use in GitHub Actions
+      Path: !Ref RolePath
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: PrimaryGitHubActionsRole
+            Effect: Allow
+            Principal:
+              Federated: !ImportValue GitHubActionsIdpARN
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: !Ref Audience
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Ref Repos
+      ManagedPolicyArns: !Ref ManagedPolicies
+
+Outputs:
+  RoleARN:
+    Description: ARN of GitHub Actions Role
+    Value: !GetAtt Role.Arn

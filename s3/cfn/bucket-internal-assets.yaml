@@ -1,0 +1,97 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 Bucket for internally accessible assets
+
+Metadata:
+  TemplateInfo:
+    Name: bucket-internal-assets
+    Description: S3 Bucket for internally accessible assets
+    Version: 1.0.0
+    Source: armory/s3/cfn/bucket-internal-assets.yml
+    Note: Deploy only to single region to prevent resource collision. (Recommended us-east-1)
+    LastUpdated: 20241206
+    Nonce: 20241206
+
+Parameters:
+  pBucketName:
+    Description: Name of Bucket
+    Type: String
+    Default: internal-assets.example.com
+
+Resources:
+  rAccessLogsBucket:
+    Type: AWS::S3::Bucket
+    # checkov:skip=CKV_AWS_18: Access Logs - Will not collect access logs on access logs
+    # checkov:skip=CKV_AWS_21: Logging Bucket - No Versioning Required
+    Properties:
+      BucketName: !Sub ${pBucketName}-access-logs
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  rBucket:
+    Type: AWS::S3::Bucket
+    # checkov:skip=CKV_AWS_54: Public Policy Allow
+    # checkov:skip=CKV_AWS_56: Public Bucket Allow
+    Properties:
+      BucketName: !Ref pBucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: false
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: false
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref rAccessLogsBucket
+        LogFilePrefix: access-logs/
+
+  rBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref rBucket
+      PolicyDocument:
+        Id: OrgIDRestriction
+        Version: 2012-10-17
+        Statement:
+          - Sid: OrgGetObject
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - s3:GetObject
+              - s3:ListBucket
+            Resource:
+              - !Sub arn:${AWS::Partition}:s3:::${pBucketName}/*
+              - !Sub arn:${AWS::Partition}:s3:::${pBucketName}
+            Condition:
+              StringEquals:
+                aws:PrincipalOrgID:
+                  - o-6rr2b5j5mg ## Sentri Cloud Main Org
+                  - o-ksk8pxsy10 ## RWickIT Testing Org
+          - Sid: DenyBucketDeletion
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Action: s3:DeleteBucket
+            Resource: !GetAtt rBucket.Arn
+          - Sid: DenyObjectDeletion
+            Effect: Deny
+            NotPrincipal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:role/sc/sentri-osa"
+            Action: s3:DeleteObject
+            Resource: !Sub ${rBucket.Arn}/*
+
+Outputs:
+  oBucketURL:
+    Value: !Sub https://${rBucket.DomainName}
+    Description: Endpoint URL for Asset Bucket
