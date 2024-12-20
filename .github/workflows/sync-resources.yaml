@@ -1,0 +1,39 @@
+---
+name: Sync Resources
+
+on:
+  push:
+    branches-ignore:
+      - master
+      - main
+
+permissions: read-all
+
+env:
+  SESSION: github-automation-action
+  DURATION: 900
+  REGION: us-east-2
+  BUCKET_NAME: armory.sentri.cloud
+
+jobs:
+  Deploy:
+    name: Upload Resources to S3
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-session-name: ${{ env.SESSION }}
+          role-duration-seconds: ${{ env.DURATION }}
+          aws-region: ${{ env.REGION }}
+          role-to-assume: ${{ secrets.PA_DELIVER }}
+
+      - name: Sync Resources to S3
+        run: |
+          aws s3 sync . s3://$BUCKET_NAME --delete --exclude ".github/*" --exclude ".trunk/*" --exclude ".github/*"
