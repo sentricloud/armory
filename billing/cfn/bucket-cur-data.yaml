@@ -24,7 +24,7 @@ Resources:
     UpdateReplacePolicy: Retain
     Condition: IsUsEast1
     Properties:
-      BucketName: !Sub "legacy-cur-billing-${AWS::AccountId}"
+      BucketName: !Sub "cur-data-export-${AWS::AccountId}"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
