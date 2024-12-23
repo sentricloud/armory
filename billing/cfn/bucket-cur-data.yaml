@@ -1,13 +1,13 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: S3 Bucket for Legacy CUR Data
+Description: S3 Bucket for CUR Data Export
 
 Metadata:
   TemplateInfo:
-    Name: bucket-external-assets
-    Description: S3 Bucket for collection of Legacy CUR Data
+    Name: bucket-cur-data
+    Description: S3 Bucket for collection of CUR Data Export
     Version: 1.0.0
-    Source: armory/billing/cfn/bucket-legacy-cur-data.yaml
+    Source: armory/billing/cfn/bucket-cur-data.yaml
     Note: Recommended to deploy only to us-east-1 region to due to billing service endpoint.
     LastUpdated: 20241206
     Nonce: 20241206
