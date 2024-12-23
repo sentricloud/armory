@@ -1,0 +1,78 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 Bucket for Legacy CUR Data
+
+Metadata:
+  TemplateInfo:
+    Name: bucket-external-assets
+    Description: S3 Bucket for collection of Legacy CUR Data
+    Version: 1.0.0
+    Source: armory/billing/cfn/bucket-legacy-cur-data.yaml
+    Note: Deploy only to single region to prevent resource collision. (Recommended us-east-1)
+    LastUpdated: 20241206
+    Nonce: 20241206
+
+Resources:
+  BillingBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub "legacy-cur-billing-${AWS::AccountId}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        LogFilePrefix: access-logs
+
+  BillingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Bucket: !Ref BillingBucket
+      PolicyDocument:
+        Statement:
+          - Sid: AllowAWSBucketAccess
+            Effect: Allow
+            Principal:
+              Service: billingreports.amazonaws.com
+            Action:
+              - s3:GetBucketAcl
+              - s3:GetBucketPolicy
+            Resource: !GetAtt BillingBucket.Arn
+          - Sid: AllowAWSObjectAccess
+            Effect: Allow
+            Principal:
+              Service: billingreports.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub ${BillingBucket.Arn}/*
+          - Sid: AllowReadFromOnlyAuthPrincipals
+            Effect: Deny
+            Principal: "*"
+            Action:
+              - s3:ListBucket
+              - s3:GetObject
+              - s3:DeleteBucket
+            Resource:
+              - !GetAtt BillingBucket.Arn
+              - !Sub ${BillingBucket.Arn}/*
+            Condition:
+              StringNotLike:
+                aws:userId:
+                  - !Sub arn:aws:iam::${AWS::AccountId}:root
+          - Sid: AllowS3LogDelivery
+            Effect: Allow
+            Principal:
+              Service: logging.s3.amazonaws.com
+            Action:
+              - s3:PutObject
+            Resource: !Sub ${BillingBucket.Arn}/*
