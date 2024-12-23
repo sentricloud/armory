@@ -8,15 +8,21 @@ Metadata:
     Description: S3 Bucket for collection of Legacy CUR Data
     Version: 1.0.0
     Source: armory/billing/cfn/bucket-legacy-cur-data.yaml
-    Note: Deploy only to single region to prevent resource collision. (Recommended us-east-1)
+    Note: Recommended to deploy only to us-east-1 region to due to billing service endpoint.
     LastUpdated: 20241206
     Nonce: 20241206
+
+Conditions:
+  IsUsEast1: !Equals
+    - !Ref AWS::Region
+    - us-east-1
 
 Resources:
   BillingBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
+    Condition: IsUsEast1
     Properties:
       BucketName: !Sub "legacy-cur-billing-${AWS::AccountId}"
       BucketEncryption:
@@ -37,6 +43,7 @@ Resources:
     Type: AWS::S3::BucketPolicy
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
+    Condition: IsUsEast1
     Properties:
       Bucket: !Ref BillingBucket
       PolicyDocument:
