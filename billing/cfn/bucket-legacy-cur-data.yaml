@@ -48,38 +48,21 @@ Resources:
       Bucket: !Ref BillingBucket
       PolicyDocument:
         Statement:
-          - Sid: AllowAWSBucketAccess
-            Effect: Allow
-            Principal:
-              Service: billingreports.amazonaws.com
-            Action:
-              - s3:GetBucketAcl
-              - s3:GetBucketPolicy
-            Resource: !GetAtt BillingBucket.Arn
-          - Sid: AllowAWSObjectAccess
-            Effect: Allow
-            Principal:
-              Service: billingreports.amazonaws.com
-            Action: s3:PutObject
-            Resource: !Sub ${BillingBucket.Arn}/*
-          - Sid: AllowReadFromOnlyAuthPrincipals
-            Effect: Deny
-            Principal: "*"
-            Action:
-              - s3:ListBucket
-              - s3:GetObject
-              - s3:DeleteBucket
-            Resource:
-              - !GetAtt BillingBucket.Arn
-              - !Sub ${BillingBucket.Arn}/*
-            Condition:
-              StringNotLike:
-                aws:userId:
-                  - !Sub arn:aws:iam::${AWS::AccountId}:root
-          - Sid: AllowS3LogDelivery
-            Effect: Allow
-            Principal:
-              Service: logging.s3.amazonaws.com
-            Action:
-              - s3:PutObject
-            Resource: !Sub ${BillingBucket.Arn}/*
+        - Sid: EnableAWSDataExportsToWriteToS3AndCheckPolicy
+          Effect: Allow
+          Principal:
+            Service:
+            - billingreports.amazonaws.com
+            - bcm-data-exports.amazonaws.com
+          Action:
+          - s3:PutObject
+          - s3:GetBucketPolicy
+          Resource:
+          - !Sub ${BillingBucket.Arn}
+          - !Sub ${BillingBucket.Arn}/*
+          Condition:
+            StringLike:
+              aws:SourceArn:
+              - arn:aws:cur:us-east-1:664418964237:definition/*
+              - arn:aws:bcm-data-exports:us-east-1:664418964237:export/*
+              aws:SourceAccount: !Sub ${AWS::AccountId}
