@@ -32,10 +32,9 @@ Parameters:
     Type: String
 
 Conditions:
-  cIsHomeRegion: !Equals [!Ref AWS::Region, !Ref HomeRegion ] ## only launch global resources in single/home region
+  cIsHomeRegion: !Equals [!Ref AWS::Region, !Ref HomeRegion] ## only launch global resources in single/home region
 
 Resources:
-
   ### IAM Support Role (IAM.18 - Low)
   SupportRoleMgmt:
     Condition: cIsHomeRegion
