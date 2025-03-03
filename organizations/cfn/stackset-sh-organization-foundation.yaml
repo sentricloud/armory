@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Foundational Organization Security Resource Deployment
+Description: Foundational Organization Security (SH) Resource Deployment
 
 Metadata:
   TemplateInfo:
@@ -32,11 +32,13 @@ Parameters:
     Type: String
 
 Conditions:
-  cIsHomeRegion: !Equals [!Ref AWS::Region, !Ref HomeRegion ] ## only launch global resources in single/home region
+  cIsHomeRegion: !Equals [!Ref AWS::Region, !Ref HomeRegion] ## only launch global resources in single/home region
 
 Resources:
+  ##############################
+  ## IAM Support Role (IAM.18 - Low)
+  ##############################
 
-  ### IAM Support Role (IAM.18 - Low)
   SupportRoleMgmt:
     Condition: cIsHomeRegion
     Type: AWS::CloudFormation::Stack
@@ -79,3 +81,47 @@ Resources:
         - ParameterKey: NonceValue
           ParameterValue: !Ref NonceValue
       TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/role-support-assume.yaml
+
+  ##############################
+  ## PASSWORD LAMBDA (IAM.15- Med, IAM.16 - Low, IAM.22 - Med)
+  ##############################
+
+  PasswordSettingsMgmt:
+    Condition: cIsHomeRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/iam-settings-password-policy.yaml
+      Parameters:
+        HomeRegion: !Ref HomeRegion
+        NonceValue: !Ref NonceValue
+
+  PasswordSettingsChildren:
+    Condition: cIsHomeRegion
+    Type: AWS::CloudFormation::StackSet
+    Properties:
+      StackSetName: iam-settings-password-policy
+      Description: IAM Settings - DO NOT DELETE - IAM User Password Default Policy
+      PermissionModel: SERVICE_MANAGED
+      AutoDeployment:
+        Enabled: true
+        RetainStacksOnAccountRemoval: false
+      Capabilities:
+        - CAPABILITY_IAM
+        - CAPABILITY_NAMED_IAM
+        - CAPABILITY_AUTO_EXPAND
+      OperationPreferences:
+        MaxConcurrentPercentage: 100
+        FailureTolerancePercentage: 100
+        RegionConcurrencyType: PARALLEL
+      StackInstancesGroup:
+        - Regions:
+            - !Ref HomeRegion
+          DeploymentTargets:
+            OrganizationalUnitIds:
+              - !Ref DeploymentOUs
+      Parameters:
+        - ParameterKey: HomeRegion
+          ParameterValue: !Ref HomeRegion
+        - ParameterKey: NonceValue
+          ParameterValue: !Ref NonceValue
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/iam-settings-password-policy.yaml
