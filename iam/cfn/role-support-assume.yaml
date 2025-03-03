@@ -1,0 +1,64 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM Support Role for External Support Access
+
+Metadata:
+  TemplateInfo:
+    Name: iam-support-role
+    Description: IAM Support Role for External Support Access
+    Version: 1.0.0
+    Source: armory/iam/cfn/role-support-assume.yaml
+    Note: Deploy to all accounts for external support access to child accounts
+    Security Hub: IAM.18 - Low
+    LastUpdated: 20241206
+    Nonce: 20241206
+
+Parameters:
+
+  SupportAccountId:
+    Description: Account ID for support account assume role
+    Type: String
+
+  HomeRegion:
+    Description: Home Control Tower and Central Security Hub Region
+    Type: String
+    MinLength: 8
+
+  NonceValue:
+    Description: Random Identifier to force update of stackset resource
+    Type: String
+
+Conditions:
+  cIsHomeRegion: !Equals [!Ref AWS::Region, !Ref HomeRegion ] ## only launch global resources in single/home region
+
+Resources:
+  SupportRole:
+    Condition: cIsHomeRegion
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: operational-support-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub ${SupportAccountId}
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/job-function/ViewOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/job-function/SupportUser
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSSupportAccess
+      Tags:
+        - Key: control
+          Value: IAM.18 - Low
+        - Key: purpose
+          Value: support access
+        - Key: deployed
+          Value: mgmt account stackset
+
+Outputs:
+  NonceValue:
+    Description: Just an output of the Nonce value
+    Value: !Ref NonceValue
