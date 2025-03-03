@@ -83,7 +83,7 @@ Resources:
       TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/role-support-assume.yaml
 
   ##############################
-  ## PASSWORD LAMBDA (IAM.15- Med, IAM.16 - Low, IAM.22 - Med)
+  ## PASSWORD LAMBDA (IAM.15- Med, IAM.16 - Low)
   ##############################
 
   PasswordSettingsMgmt:
