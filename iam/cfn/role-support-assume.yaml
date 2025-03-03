@@ -14,7 +14,6 @@ Metadata:
     Nonce: 20241206
 
 Parameters:
-
   SupportAccountId:
     Description: Account ID for support account assume role
     Type: String
@@ -29,7 +28,7 @@ Parameters:
     Type: String
 
 Conditions:
-  cIsHomeRegion: !Equals [!Ref AWS::Region, !Ref HomeRegion ] ## only launch global resources in single/home region
+  cIsHomeRegion: !Equals [!Ref AWS::Region, !Ref HomeRegion] ## only launch global resources in single/home region
 
 Resources:
   SupportRole:

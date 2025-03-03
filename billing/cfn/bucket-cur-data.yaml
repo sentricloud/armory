@@ -13,9 +13,7 @@ Metadata:
     Nonce: 20241206
 
 Conditions:
-  IsUsEast1: !Equals
-    - !Ref AWS::Region
-    - us-east-1
+  IsUsEast1: !Equals [!Ref AWS::Region, !Ref us-east-1]
 
 Resources:
   BillingBucket:
@@ -48,21 +46,21 @@ Resources:
       Bucket: !Ref BillingBucket
       PolicyDocument:
         Statement:
-        - Sid: EnableAWSDataExportsToWriteToS3AndCheckPolicy
-          Effect: Allow
-          Principal:
-            Service:
-            - billingreports.amazonaws.com
-            - bcm-data-exports.amazonaws.com
-          Action:
-          - s3:PutObject
-          - s3:GetBucketPolicy
-          Resource:
-          - !Sub ${BillingBucket.Arn}
-          - !Sub ${BillingBucket.Arn}/*
-          Condition:
-            StringLike:
-              aws:SourceArn:
-              - arn:aws:cur:us-east-1:664418964237:definition/*
-              - arn:aws:bcm-data-exports:us-east-1:664418964237:export/*
-              aws:SourceAccount: !Sub ${AWS::AccountId}
+          - Sid: EnableAWSDataExportsToWriteToS3AndCheckPolicy
+            Effect: Allow
+            Principal:
+              Service:
+                - billingreports.amazonaws.com
+                - bcm-data-exports.amazonaws.com
+            Action:
+              - s3:PutObject
+              - s3:GetBucketPolicy
+            Resource:
+              - !Sub ${BillingBucket.Arn}
+              - !Sub ${BillingBucket.Arn}/*
+            Condition:
+              StringLike:
+                aws:SourceArn:
+                  - arn:aws:cur:us-east-1:664418964237:definition/*
+                  - arn:aws:bcm-data-exports:us-east-1:664418964237:export/*
+                aws:SourceAccount: !Sub ${AWS::AccountId}
