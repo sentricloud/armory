@@ -24,6 +24,7 @@ find "$CURRENT_DIR" -type f \
     -not -path "*/.git*" \
     -not -path "*/.trunk/*" \
     -not -path "*/scripts/*" \
+    -not -path "*/archive/*" \
     -not -name ".DS_Store" \
     -not -name "LICENSE" \
     -not -name "foundation_files.txt" \

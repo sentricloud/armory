@@ -10,7 +10,7 @@ Parameters:
   ExecutionRoleName:
     Type: String
     Default: AWSCloudFormationStackSetExecutionRole
-    Description: "The name of the execution role. Defaults to 'AWSCloudFormationStackSetExecutionRole'."
+    Description: The name of the execution role. Defaults to 'AWSCloudFormationStackSetExecutionRole'.
 
 Resources:
   ExecutionRole:

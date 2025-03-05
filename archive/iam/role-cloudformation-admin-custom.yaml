@@ -5,7 +5,7 @@ Parameters:
   AdministrationRoleName:
     Type: String
     Default: AWSCloudFormationStackSetAdministrationRole
-    Description: "The name of the administration role. Defaults to 'AWSCloudFormationStackSetAdministrationRole'."
+    Description: The name of the administration role. Defaults to 'AWSCloudFormationStackSetAdministrationRole'.
   ExecutionRoleName:
     Type: String
     Default: AWSCloudFormationStackSetExecutionRole
@@ -34,4 +34,4 @@ Resources:
                 Action:
                   - sts:AssumeRole
                 Resource:
-                  - !Sub 'arn:*:iam::*:role/${ExecutionRoleName}'
+                  - !Sub "arn:*:iam::*:role/${ExecutionRoleName}"
