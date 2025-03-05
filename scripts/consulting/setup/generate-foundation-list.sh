@@ -2,7 +2,8 @@
 
 # Configuration
 OUTPUT_FILE="foundation_files.txt"  # The file to generate
-CURRENT_DIR="$(pwd)"  # Current directory as the base
+# CURRENT_DIR="$(pwd)"  # Current directory as the base
+CURRENT_DIR="../../../"
 
 echo "Generating $OUTPUT_FILE from files in $CURRENT_DIR"
 
@@ -19,7 +20,7 @@ FILE_COUNT=0
 
 # Recursively find all files in the current directory
 # Exclude .git directory, .DS_Store, LICENSE, and foundation_files.txt itself
-find . -type f \
+find "$CURRENT_DIR" -type f \
     -not -path "*/.git*" \
     -not -path "*/.trunk/*" \
     -not -path "*/scripts/*" \
@@ -30,7 +31,7 @@ find . -type f \
     -not -name "README.md" \
     -not -name "$OUTPUT_FILE" | while IFS= read -r file; do
     # Remove the leading './' from the path to make it a clean S3 key
-    key="${file#./}"
+    key="${file#"$CURRENT_DIR/"}"
 
     # Write the key to the output file
     echo "$key" >> "$OUTPUT_FILE"
