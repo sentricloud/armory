@@ -47,8 +47,8 @@ Resources:
     Condition: cIsHomeRegion
     Type: AWS::CloudFormation::StackSet
     Properties:
-      StackSetName: iam-role-assume-support
-      Description: Support Role - DO NOT DELETE - Child Account Support Access Role
+      StackSetName: role-cloudformation-execution
+      Description: CLoudFormation Execution Role - DO NOT DELETE - Role for self-managed CloudFormation StackSets
       PermissionModel: SERVICE_MANAGED
       AutoDeployment:
         Enabled: true
@@ -75,88 +75,6 @@ Resources:
         - ParameterKey: NonceValue
           ParameterValue: !Ref NonceValue
       TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/role-cloudformation-execution.yaml
-
-  ##############################
-  ## PASSWORD LAMBDA (IAM.15- Med, IAM.16 - Low)
-  ##############################
-
-  PasswordSettingsMgmt:
-    Condition: cIsHomeRegion
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/iam-settings-password-policy.yaml
-      Parameters:
-        HomeRegion: !Ref HomeRegion
-        NonceValue: !Ref NonceValue
-
-  PasswordSettingsChildren:
-    Condition: cIsHomeRegion
-    Type: AWS::CloudFormation::StackSet
-    Properties:
-      StackSetName: iam-settings-password-policy
-      Description: IAM Settings - DO NOT DELETE - IAM User Password Default Policy
-      PermissionModel: SERVICE_MANAGED
-      AutoDeployment:
-        Enabled: true
-        RetainStacksOnAccountRemoval: false
-      Capabilities:
-        - CAPABILITY_IAM
-        - CAPABILITY_NAMED_IAM
-        - CAPABILITY_AUTO_EXPAND
-      OperationPreferences:
-        MaxConcurrentPercentage: 100
-        FailureTolerancePercentage: 100
-        RegionConcurrencyType: PARALLEL
-      StackInstancesGroup:
-        - Regions:
-            - !Ref HomeRegion
-          DeploymentTargets:
-            OrganizationalUnitIds:
-              - !Ref DeploymentOUs
-      Parameters:
-        - ParameterKey: HomeRegion
-          ParameterValue: !Ref HomeRegion
-        - ParameterKey: NonceValue
-          ParameterValue: !Ref NonceValue
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/iam-settings-password-policy.yaml
-
-  ##############################
-  ## EBS Encryption (EC2.7)
-  ##############################
-
-  EbsEncryptionMgmt:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/ebs-enable-encryption.yaml
-      Parameters:
-        NonceValue: !Ref NonceValue
-
-  EbsEncryptionChildren:
-    Type: AWS::CloudFormation::StackSet
-    Properties:
-      StackSetName: enable-ebs-encryption
-      Description: EBS Encryption - DO NOT DELETE - Configured Default EBS Encryption
-      PermissionModel: SERVICE_MANAGED
-      AutoDeployment:
-        Enabled: true
-        RetainStacksOnAccountRemoval: false
-      Capabilities:
-        - CAPABILITY_IAM
-        - CAPABILITY_NAMED_IAM
-        - CAPABILITY_AUTO_EXPAND
-      OperationPreferences:
-        MaxConcurrentPercentage: 100
-        FailureTolerancePercentage: 100
-        RegionConcurrencyType: PARALLEL
-      StackInstancesGroup:
-        - Regions: !Split [",", !Ref ConfigRegions]
-          DeploymentTargets:
-            OrganizationalUnitIds:
-              - !Ref DeploymentOUs
-      Parameters:
-        - ParameterKey: NonceValue
-          ParameterValue: !Ref NonceValue
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/ebs-enable-encryption.yaml
 
 Outputs:
   NonceValue:
