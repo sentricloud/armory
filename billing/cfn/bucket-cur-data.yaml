@@ -13,7 +13,7 @@ Metadata:
     Nonce: 20241206
 
 Conditions:
-  IsUsEast1: !Equals [!Ref AWS::Region, !Ref us-east-1]
+  IsUsEast1: !Equals [!Ref AWS::Region, us-east-1] ## Default Billing region is us-east-1
 
 Resources:
   BillingBucket:
