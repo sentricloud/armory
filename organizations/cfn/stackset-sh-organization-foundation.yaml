@@ -137,7 +137,7 @@ Resources:
   EbsEncryptionMgmt:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ebs/cfn/ebs-enable-encryption.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/cfn/ebs-enable-encryption.yaml
       Parameters:
         NonceValue: !Ref NonceValue
 
@@ -159,12 +159,16 @@ Resources:
         FailureTolerancePercentage: 100
         RegionConcurrencyType: PARALLEL
       StackInstancesGroup:
-        - Regions:
-            !Split [',', !Ref ConfigRegions]
+        - Regions: !Split [",", !Ref ConfigRegions]
           DeploymentTargets:
             OrganizationalUnitIds:
               - !Ref DeploymentOUs
       Parameters:
         - ParameterKey: NonceValue
           ParameterValue: !Ref NonceValue
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ebs/cfn/ebs-enable-encryption.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/cfn/ebs-enable-encryption.yaml
+
+Outputs:
+  NonceValue:
+    Description: Just an output of the Nonce value
+    Value: !Ref NonceValue
