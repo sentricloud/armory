@@ -44,7 +44,7 @@ Resources:
         AdministratorAccountId: !Ref AdministratorAccountId
         NonceValue: !Ref NonceValue
 
-  CloudFormationExcutionRole:
+  CloudFormationExecutionRole:
     Condition: cIsHomeRegion
     Type: AWS::CloudFormation::StackSet
     Properties:
