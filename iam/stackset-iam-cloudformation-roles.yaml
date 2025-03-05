@@ -49,7 +49,7 @@ Resources:
     Type: AWS::CloudFormation::StackSet
     Properties:
       StackSetName: role-cloudformation-execution
-      Description: CLoudFormation Execution Role - DO NOT DELETE - Role for self-managed CloudFormation StackSets
+      Description: CloudFormation Execution Role - DO NOT DELETE - Role for self-managed CloudFormation StackSets
       PermissionModel: SERVICE_MANAGED
       AutoDeployment:
         Enabled: true
