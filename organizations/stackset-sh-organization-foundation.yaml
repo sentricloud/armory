@@ -47,7 +47,7 @@ Resources:
     Condition: cIsHomeRegion
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/role-support-assume.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/role-support-assume.yaml
       Parameters:
         SupportAccountId: !Ref SupportAccountId
         HomeRegion: !Ref HomeRegion
@@ -84,7 +84,7 @@ Resources:
           ParameterValue: !Ref HomeRegion
         - ParameterKey: NonceValue
           ParameterValue: !Ref NonceValue
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/role-support-assume.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/role-support-assume.yaml
 
   ##############################
   ## PASSWORD LAMBDA (IAM.15- Med, IAM.16 - Low)
@@ -94,7 +94,7 @@ Resources:
     Condition: cIsHomeRegion
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/iam-settings-password-policy.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/iam-settings-password-policy.yaml
       Parameters:
         HomeRegion: !Ref HomeRegion
         NonceValue: !Ref NonceValue
@@ -128,7 +128,7 @@ Resources:
           ParameterValue: !Ref HomeRegion
         - ParameterKey: NonceValue
           ParameterValue: !Ref NonceValue
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/cfn/iam-settings-password-policy.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/iam-settings-password-policy.yaml
 
   ##############################
   ## EBS Encryption (EC2.7)
@@ -137,7 +137,7 @@ Resources:
   EbsEncryptionMgmt:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/cfn/ebs-enable-encryption.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/ebs-enable-encryption.yaml
       Parameters:
         NonceValue: !Ref NonceValue
 
@@ -166,7 +166,7 @@ Resources:
       Parameters:
         - ParameterKey: NonceValue
           ParameterValue: !Ref NonceValue
-      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/cfn/ebs-enable-encryption.yaml
+      TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/ec2/ebs-enable-encryption.yaml
 
 Outputs:
   NonceValue:

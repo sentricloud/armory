@@ -22,6 +22,7 @@ FILE_COUNT=0
 find . -type f \
     -not -path "*/.git*" \
     -not -path "*/.trunk/*" \
+    -not -path "*/scripts/*" \
     -not -name ".DS_Store" \
     -not -name "LICENSE" \
     -not -name "foundation_files.txt" \
