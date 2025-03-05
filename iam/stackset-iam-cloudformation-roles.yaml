@@ -70,8 +70,6 @@ Resources:
       Parameters:
         - ParameterKey: AdministratorAccountId
           ParameterValue: !Ref AdministratorAccountId
-        - ParameterKey: HomeRegion
-          ParameterValue: !Ref HomeRegion
         - ParameterKey: NonceValue
           ParameterValue: !Ref NonceValue
       TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/role-cloudformation-execution.yaml
