@@ -7,7 +7,7 @@ Metadata:
     Name: bucket-cur-data
     Description: S3 Bucket for collection of CUR Data Export
     Version: 1.0.0
-    Source: armory/billing/cfn/bucket-cur-data.yaml
+    Source: armory/billing/bucket-cur-data.yaml
     Note: Recommended to deploy only to us-east-1 region to due to billing service endpoint.
     LastUpdated: 20241206
     Nonce: 20241206

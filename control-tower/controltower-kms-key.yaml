@@ -8,7 +8,7 @@ Metadata:
     Description: KMS Key for Encrytping AWS Control Tower Configuration
     Deploy-To: Management Account Home Region
     Version: 1.0.0
-    Source: armory/control-tower/cfn/controltower-kms-key.yaml
+    Source: armory/control-tower/controltower-kms-key.yaml
     Note: This template is part of the SC Consulting product deployment
     QuickStackLink: Not deployed to bucket currently
     LastUpdated: 20241206

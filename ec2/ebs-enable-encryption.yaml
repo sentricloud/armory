@@ -7,7 +7,7 @@ Metadata:
     Name: ebs-set-default-encryption
     Description: Automation for the setting of Default EBS Encryption
     Version: 1.0.0
-    Source: armory/ebs/cfn/ebs-enable-encryption.yaml
+    Source: armory/ebs/ebs-enable-encryption.yaml
     Note: Deploy to all accounts to enable new EBS volume encryption
     Security Hub: EC2.7
     LastUpdated: 20241206

@@ -7,7 +7,7 @@ Metadata:
     Name: iam-support-role
     Description: IAM Support Role for External Support Access
     Version: 1.0.0
-    Source: armory/iam/cfn/role-support-assume.yaml
+    Source: armory/iam/role-support-assume.yaml
     Note: Deploy to all accounts for external support access to child accounts
     Security Hub: IAM.18 - Low
     LastUpdated: 20241206

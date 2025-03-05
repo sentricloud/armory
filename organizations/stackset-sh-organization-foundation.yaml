@@ -7,7 +7,7 @@ Metadata:
     Name: stackset-sh-organization-foundation
     Description: Foundational Organization Security Resource Deployment
     Version: 1.0.0
-    Source: armory/organization/cfn/stackset-sh-organization-foundation.yaml
+    Source: armory/organization/stackset-sh-organization-foundation.yaml
     Note: Deploy from management account to all accounts for Security Hub Checks
     LastUpdated: 20241206
     Nonce: 20241206
