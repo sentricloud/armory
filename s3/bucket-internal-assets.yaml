@@ -7,7 +7,7 @@ Metadata:
     Name: bucket-internal-assets
     Description: S3 Bucket for internally accessible assets
     Version: 1.0.0
-    Source: armory/s3/cfn/bucket-internal-assets.yml
+    Source: armory/s3/bucket-internal-assets.yml
     Note: Deploy only to single region to prevent resource collision. (Recommended us-east-1)
     LastUpdated: 20241206
     Nonce: 20241206

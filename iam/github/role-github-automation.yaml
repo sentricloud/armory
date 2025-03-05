@@ -7,7 +7,7 @@ Metadata:
     Description: IAM Roles for GitHub Action Automation
     Deploy-To: Once in any account
     Version: 1.0.0
-    Source: armory/iam/cfn/github/role-github-automation.yaml
+    Source: armory/iam/github/role-github-automation.yaml
     Note: This template is part of the SC Consulting product deployment
     QuickStackLink: Not deployed to bucket currently
     LastUpdated: 20241220
