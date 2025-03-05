@@ -41,6 +41,7 @@ Resources:
     Properties:
       TemplateURL: https://s3.us-east-2.amazonaws.com/armory.sentri.cloud/iam/role-cloudformation-admin.yaml
       Parameters:
+        AdministratorAccountId: !Ref AdministratorAccountId
         NonceValue: !Ref NonceValue
 
   CloudFormationExcutionRole:
