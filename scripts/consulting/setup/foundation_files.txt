@@ -7,12 +7,11 @@ s3/bucket-internal-assets.yaml
 control-tower/controltower-kms-key.yaml
 control-tower/customizations-for-aws-control-tower.template
 iam/iam-settings-password-policy.yaml
-iam/github/archive/role-github-oidc-template.yaml
-iam/github/archive/role-github-oidc-read.yaml
-iam/github/archive/role-github-oidc-admin.yaml
-iam/github/archive/role-github-oidc-deliver.yaml
+iam/stackset-iam-cloudformation-roles.yaml
+iam/role-cloudformation-execution.yaml
 iam/github/role-github-automation.yaml
 iam/github/idp-github-oidc.yaml
+iam/role-cloudformation-admin.yaml
 iam/role-support-assume.yaml
 automation/foundational-automation.yaml
 backup/org-backup-kms-key.yaml
