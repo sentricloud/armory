@@ -4,7 +4,7 @@
 BUCKET_NAME="armory.sentri.cloud"
 REGION="us-east-2"
 BASE_URL="https://s3.us-east-2.amazonaws.com"
-KEY_LIST_KEY="consulting/setup/foundation_files.txt"
+KEY_LIST_KEY="scripts/consulting/setup/foundation_files.txt"
 LOCAL_KEY_LIST="./foundation_files.txt"
 LOCAL_DIR="./foundation"
 
