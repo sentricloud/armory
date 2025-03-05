@@ -53,7 +53,7 @@ Resources:
     Condition: cIsHomeRegion
     Type: AWS::CloudFormation::StackSet
     Properties:
-      StackSetName: sh-organization-foundation
+      StackSetName: iam-role-assume-support
       Description: Support Role - DO NOT DELETE - Child Account Support Access Role
       PermissionModel: SERVICE_MANAGED
       AutoDeployment:
